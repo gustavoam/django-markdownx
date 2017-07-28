@@ -3,7 +3,9 @@ from django.utils.module_loading import import_string
 from django.views.generic.edit import View, FormView
 
 from .forms import ImageForm
-from .settings import MARKDOWNX_MARKDOWNIFY_FUNCTION
+from .settings import (
+    MARKDOWNX_MARKDOWNIFY_FUNCTION, MARKDOWNX_UPLOAD_CONTENT_TYPES,
+)
 
 
 class MarkdownifyView(View):
@@ -31,7 +33,12 @@ class ImageUploadView(FormView):
         response = super(ImageUploadView, self).form_valid(form)
 
         if self.request.is_ajax():
-            image_code = '![]({})'.format(image_path)
+            content_type = form.cleaned_data.content_type
+            if content_type in MARKDOWNX_UPLOAD_CONTENT_TYPES:
+                image_code = '![]({})'.format(image_path)
+            else:
+                image_code = '[{}]({})'.format(
+                    form.cleaned_data.name, image_path)
             return JsonResponse({'image_code': image_code})
         else:
             return response

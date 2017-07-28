@@ -70,7 +70,8 @@ class ImageForm(forms.Form):
 
         if content_type.lower() != self._SVG_TYPE:
             # Processing the raster graphic image:
-            image = self._process_raster(image, image_extension)
+            if content_type in MARKDOWNX_UPLOAD_CONTENT_TYPES:
+                image = self._process_raster(image, image_extension)
             image_size = image.tell()
 
         # Processed file (or the actual file in the case of SVG) is now
@@ -150,9 +151,7 @@ class ImageForm(forms.Form):
         content_type = upload.content_type
         file_size = getattr(upload, '_size')
 
-        if content_type not in MARKDOWNX_UPLOAD_CONTENT_TYPES:
-            raise self._error_templates['unsupported_format']
-        elif file_size > MARKDOWNX_UPLOAD_MAX_SIZE:
+        if file_size > MARKDOWNX_UPLOAD_MAX_SIZE:
             raise self._error_templates['invalid_size'](file_size)
 
         return upload
