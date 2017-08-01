@@ -9,7 +9,6 @@ from django.utils.six import BytesIO
 from django.core.files.storage import default_storage
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import filesizeformat
-from django.core.files.uploadedfile import UploadedFile
 
 # Internal.
 from .utils import scale_and_crop
@@ -76,14 +75,7 @@ class ImageForm(forms.Form):
 
         unique_file_name = self.get_unique_file_name(file_name)
         full_path = path.join(MARKDOWNX_MEDIA_PATH, unique_file_name)
-        uploaded_file = UploadedFile(
-            file=image,
-            name=full_path,
-            content_type=content_type,
-            size=image_size,
-            charset=None
-        )
-        default_storage.save(full_path, uploaded_file)
+        default_storage.save(full_path, image)
         return default_storage.url(full_path)
 
     def _save(self, image, file_name, commit):
