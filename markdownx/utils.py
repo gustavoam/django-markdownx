@@ -12,7 +12,9 @@ def markdownify(content):
                         extension_configs=MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS
     )
 
-def scale_and_crop(image, size, crop=False, upscale=False, quality=None):
+
+def scale_and_crop(image, size, crop=False, upscale=False, quality=None,
+                   close_image=True):
     # Open image and store format/metadata.
     image.open()
     im = Image.open(image)
@@ -57,5 +59,6 @@ def scale_and_crop(image, size, crop=False, upscale=False, quality=None):
 
     # Close image and replace format/metadata, as PIL blows this away.
     im.format, im.info = im_format, im_info
-    image.close()
+    if close_image:
+        image.close()
     return im

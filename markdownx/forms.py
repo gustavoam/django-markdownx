@@ -104,14 +104,16 @@ class ImageForm(forms.Form):
         return image_data(path=full_path, image=image)
 
     @staticmethod
-    def _process_raster(image, extension):
+    def _process_raster(
+            image, extension, image_max_size=None, close_image=True):
         """
         Processing of raster graphic image.
         """
         # File needs to be uploaded and saved temporarily in
         # the memory for additional processing using PIL.
         thumb_io = BytesIO()
-        preped_image = scale_and_crop(image, **MARKDOWNX_IMAGE_MAX_SIZE)
+        sdict = image_max_size if image_max_size else MARKDOWNX_IMAGE_MAX_SIZE
+        preped_image = scale_and_crop(image, **sdict, close_image=close_image)
         preped_image.save(thumb_io, extension)
         thumb_io.seek(0, SEEK_END)
         return thumb_io
