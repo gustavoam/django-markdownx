@@ -142,7 +142,9 @@ class ImageForm(forms.Form):
             raise self._error_templates['not_uploaded']
 
         content_type = upload.content_type
-        file_size = getattr(upload, '_size')
+        file_size = getattr(upload, '_size', None)
+        if file_size is None:
+            file_size = getattr(upload, 'size')
 
         if file_size > MARKDOWNX_UPLOAD_MAX_SIZE:
             raise self._error_templates['invalid_size'](file_size)
